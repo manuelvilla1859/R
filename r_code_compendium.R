@@ -222,10 +222,50 @@ x[["a"]]
 
 
 
+n <- 10
+sample(n, 4, replace = F)
+
+
+# Data frame - Sorting ====================================
+df <- data.frame(x = rep(1:3, each = 2), z = letters[1:6], y = 6:1)
+df
+
+df[order(df$y, decreasing = F), ]
+df[, order(names(df))]
 
 
 
 
 
 
+x <- sample(10) < 4
+which(x)
 
+x <- 1:10 %% 2 == 0
+y <- 1:10 %% 5 == 0
+which(x & y)
+which(x | y)
+which(x & !y)
+which(!x & y)
+which(!x & !y)
+which(!(x | y))
+
+
+library('datasets')
+library(help='datasets')
+
+
+# The paste function =======================================
+paste("a", "b")  # "a b"
+paste0("a", "b")  # concatenate without space, "ab"
+paste("a", "b", sep="")  # same as paste0
+paste(c(1:4), c(5:8), sep="")  # "15" "26" "37" "48"
+paste(c(1:4), c(5:8), sep="", collapse="")  # "15263748"
+paste0(c("var"), c(1:5))  # "var1" "var2" "var3" "var4" "var5"
+paste0(c("var", "pred"), c(1:3))  # "var1" "pred2" "var3"
+paste0(c("var", "pred"), rep(1:3, each=2))  # "var1" "pred1" "var2" "pred2" "var3" "pred3
+
+
+table(airquality$Month[c(1:60)]) 
+table(airquality$Temp[c(1:60)]) 
+table(airquality$Month[c(1:60)], airquality$Temp[c(1:60)]) 
