@@ -269,3 +269,128 @@ paste0(c("var", "pred"), rep(1:3, each=2))  # "var1" "pred1" "var2" "pred2" "var
 table(airquality$Month[c(1:60)]) 
 table(airquality$Temp[c(1:60)]) 
 table(airquality$Month[c(1:60)], airquality$Temp[c(1:60)]) 
+
+
+# Plotting - ggplot2 ==================================================================
+
+# browseURL('http://r-statistics.co/ggplot2-Tutorial-With-R.html')
+
+str(diamonds)
+
+ggplot(diamonds, aes(x=carat, y=price)) +
+  labs(title = 'Diamonds, diamonds, diamonds...', x = 'Carat', y = 'Price') +
+  theme(plot.title = element_text(size = 30, face = 'bold'),
+        axis.title.x = element_text(size = 20),
+        axis.title.y = element_text(size = 20),
+        axis.text.x = element_text(size = 15),
+        axis.text.y = element_text(size = 15)) +
+  scale_colour_discrete(name = 'Diamond colour') +
+  scale_shape_discrete(name = 'Diamond cut') +
+  geom_point(aes(color=color, shape=cut)) +
+  geom_smooth() +
+  # facet_wrap(color ~ cut, ncol = 5) #, scales = 'free')
+  facet_grid(color ~ cut) # OJO: facet_grid makes all plots have the same scale, so only appropriate for series that are not too far from each other.
+
+# time series
+data(economics, package = 'ggplot2') # this simply initiates the data set called 'economics' which is included as an example in the ggplot2 package
+
+econ <- data.frame(economics) # economics is not originally a data frame
+econ
+
+# Approach 1
+ggplot(econ) + 
+  geom_line(aes(x=date, y=pce, color="pcs")) + 
+  geom_line(aes(x=date, y=unemploy, col="unemploy")) + 
+  scale_color_discrete(name="Legend") + 
+  labs(title="Economics")
+
+# Approach 2
+install.packages("reshape2")
+library(reshape2)
+
+df <- melt(economics[, c("date", "pce", "unemploy")], id="date")
+ggplot(df) +
+  geom_line(aes(x=date, y=value, color=variable)) + 
+  labs(title="Economics")
+
+df <- melt(economics[, c("date", "pce", "unemploy", "psavert")], id="date")
+ggplot(df) + 
+  geom_line(aes(x=date, y=value, color=variable))  + 
+  facet_wrap( ~ variable, scales="free") 
+
+
+# bar charts
+plot1 <- ggplot(mtcars, aes(x = cyl)) +
+           geom_bar()
+print(plot1)
+
+df <- data.frame(var=c("a", "b", "c"), nums=c(1:3))
+plot2 <- ggplot(df, aes(x = var, y = nums)) +
+           geom_bar(stat = 'identity')
+plot2
+
+# displaying multiple ggplots in a single grid
+library(gridExtra)
+grid.arrange(plot1, plot2, ncol = 2)
+
+# flipping coordinates
+plot1 + coord_flip()
+
+
+
+# themes
+install.packages('ggthemes', dependencies = TRUE)
+library(ggthemes)
+
+ggplot(diamonds, aes(x = carat, y = price, color = cut)) +
+  geom_point() +
+  geom_smooth(aes()) +
+  # theme_wsj() +
+  # theme_fivethirtyeight() +
+  theme_economist() +
+  scale_colour_economist()
+
+
+
+
+
+# Adjust X and Y axis limits
+
+#  1- Using coord_cartesian(xlim=c(x1,x2))
+#  2- Using xlim(c(x1,x2))
+# Warning: Item 2 will delete the datapoints that lie outisde the limit from the data itself.
+# So, if you add any smoothing line line and such, the outcome will be distorted. 
+# Item 1 does not delete any datapoint, but instead zooms in to a specific region of the chart.
+
+ggplot(diamonds, aes(x = carat, y = price, color = cut)) +
+  geom_point() +
+  geom_smooth(aes()) +
+  # coord_cartesian(ylim = c(0, 10000)) +
+  ylim(c(0,10000))
+
+
+
+
+# Plotting - ggfortify ------------
+# browseURL('http://rpubs.com/sinhrks/plot_ts')
+
+install.packages('ggfortify')
+library(ggfortify)
+
+install.packages('zoo')
+library(zoo)
+
+str(AirPassengers)
+autoplot(AirPassengers)
+
+install.packages('vars')
+library(vars)
+data(Canada)
+str(Canada)
+autoplot(Canada)
+autoplot(Canada$rw, linetype = 'dashed', colour = 'blue')# Use help(autoplot.ts) (or help(autoplot.*) for any other objects) to check available options.
+autoplot(Canada, facets = F) # all lines in one single graph
+
+autoplot(AirPassengers, geom = 'bar', fill = 'brown4')
+autoplot(AirPassengers, geom = 'point', shape = 5)
+
